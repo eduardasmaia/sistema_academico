@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Acadêmico | Faculdade J&M</title>
+    <style>
+        :root {
+            --primary: #002147;   /* Azul Marinho J&M */
+            --accent: #0056b3;    /* Azul Royal */
+            --white: #ffffff;
+            --bg: #f4f7f9;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --text-dark: #333;
+            --border-color: #e1e8ee;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg); 
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-dark);
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #00152e 100%);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: opacity 0.4s ease;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .logo-area {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brasao-img {
+            width: 110px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-area p {
+            color: #777;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .form-group { 
+            text-align: left; 
+            margin-bottom: 18px; 
+        }
+
+        label { 
+            display: block; 
+            color: var(--primary); 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            font-size: 0.85rem; 
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 8px; 
+            outline: none; 
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        input:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        .btn-login { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover { 
+            background: var(--accent); 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- TELA DO SISTEMA --- */
+        #sistema-screen { 
+            display: none; 
+            height: 100vh; 
+        }
+
+        .wrapper { 
+            display: flex; 
+            height: 100%; 
+        }
+        
+        nav { 
+            width: 280px; 
+            background: var(--primary); 
+            color: white; 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        }
+
+        nav h2 { 
+            border-bottom: 2px solid rgba(255,255,255,0.1); 
+            padding-bottom: 15px; 
+            margin-bottom: 25px; 
+            font-size: 1.1rem; 
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        nav ul { 
+            list-style: none; 
+            flex: 1; 
+        }
+
+        nav li { 
+            padding: 14px 18px; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            transition: all 0.2s ease; 
+            margin-bottom: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        nav li:hover { 
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 24px;
+        }
+
+        main { 
+            flex: 1; 
+            padding: 40px; 
+            overflow-y: auto; 
+            background: var(--bg);
+        }
+
+        .card { 
+            background: var(--white); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        /* TABELAS */
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            margin-top: 10px; 
+        }
+
+        th { 
+            background: #f8f9fa; 
+            color: var(--primary); 
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+
+        td { 
+            padding: 15px; 
+            border-bottom: 1px solid #f0f0f0; 
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #fafafa; }
+        
+        .badge { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            color: white; 
+            display: inline-block;
+        }
+
+        .admin { background: var(--primary); }
+        .professor { background: var(--warning); }
+        .aluno { background: var(--success); }
+
+        .logout-btn { 
+            background: var(--danger); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .logout-btn:hover { opacity: 0.9; }
+
+        #erro { 
+            color: var(--danger); 
+            font-size: 0.85rem; 
+            margin-top: 12px; 
+            font-weight: 600; 
+        }
+
+        .footer-links a {
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="login-screen">
+        <div class="login-card">
+            <div class="logo-area">
+                <img src="image_7adc80.png" alt="Brasão Faculdade J&M" class="brasao-img" onerror="this.src='https://via.placeholder.com/100x120/002147/FFFFFF?text=J%26M'">
+                <h1>FACULDADE J&M</h1>
+                <p>Portal Acadêmico</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="usuario-input">Usuário ou CPF</label>
+                    <input type="text" id="usuario-input" placeholder="Digite seu acesso" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha-input">Senha</label>
+                    <input type="password" id="senha-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">ACESSAR SISTEMA</button>
+                <div id="erro"></div>
+            </form>
+
+            <div class="footer-links" style="margin-top: 25px; font-size: 0.8rem;">
+                <a href="#" style="color: var(--accent); text-decoration: none; margin-right: 10px;">Esqueceu a senha?</a> • 
+                <a href="#" style="color: var(--accent); text-decoration: none; margin-left: 10px;">Primeiro acesso</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="sistema-screen">
+        <div class="wrapper">
+            <nav>
+                <img src="image_7adc80.png" alt="J&M" style="width: 60px; margin-bottom: 15px; align-self: center; filter: brightness(0) invert(1);">
+                <h2>FACULDADE J&M</h2>
+                <ul id="menu-acesso"></ul>
+                <button class="logout-btn" onclick="executarLogout()">SAIR DO PORTAL</button>
+            </nav>
+            <main id="app-content"></main>
+        </div>
+    </section>
+
+    <script>
+        const store = {
+            usuarios: [
+                { id: 1, nome: "Jarlison", papel: "admin", senha: "123" },
+                { id: 2, nome: "Maria Eduarda", papel: "admin", senha: "123" },
+                { id: 3, nome: "Márcia", papel: "professor", senha: "123" },
+                { id: 4, nome: "José", papel: "aluno", senha: "123" },
+                { id: 5, nome: "Igor", papel: "aluno", senha: "123" }
+            ],
+            disciplinas: [
+                { id: 101, nome: "Cálculo I", professor: "Márcia" },
+                { id: 102, nome: "Estrutura de Dados", professor: "Márcia" }
+            ],
+            notas: [
+                { aluno: "José", disciplina: "Cálculo I", nota: 8.5, freq: "90%" },
+                { aluno: "Igor", disciplina: "Estrutura de Dados", nota: 7.0, freq: "85%" }
+            ]
+        };
+
+        let usuarioLogado = null;
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userIn = document.getElementById("usuario-input").value;
+            const passIn = document.getElementById("senha-input").value;
+
+            const user = store.usuarios.find(u => 
+                u.nome.toLowerCase() === userIn.toLowerCase() && u.senha === passIn
+            );
+
+            if (user) {
+                usuarioLogado = user;
+                document.getElementById("login-screen").style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById("login-screen").style.display = "none";
+                    document.getElementById("sistema-screen").style.display = "block";
+                    desenharMenu();
+                    irParaHome();
+                }, 400);
+            } else {
+                document.getElementById("erro").innerText = "Usuário ou senha incorretos!";
+            }
+        });
+
+        function desenharMenu() {
+            const menu = document.getElementById("menu-acesso");
+            menu.innerHTML = "";
+            if (usuarioLogado.papel === "admin") {
+                menu.innerHTML += `<li onclick="navegar('usuarios')">👤 Usuários</li>`;
+                menu.innerHTML += `<li onclick="navegar('disciplinas')">📚 Disciplinas</li>`;
+            } else if (usuarioLogado.papel === "professor") {
+                menu.innerHTML += `<li onclick="navegar('disciplinas')">📚 Minhas Turmas</li>`;
+            } else {
+                menu.innerHTML += `<li onclick="navegar('notas')">📝 Minhas Notas</li>`;
+            }
+        }
+
+        const views = {
+            usuarios: () => `
+                <div class="card">
+                    <h3>Gestão de Usuários</h3>
+                    <table>
+                        <thead><tr><th>ID</th><th>Nome</th><th>Papel</th></tr></thead>
+                        <tbody>${store.usuarios.map(u => `<tr><td>#${u.id}</td><td><strong>${u.nome}</strong></td><td><span class="badge ${u.papel}">${u.papel.toUpperCase()}</span></td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`,
+            disciplinas: () => `
+                <div class="card">
+                    <h3>Disciplinas Ofertadas</h3>
+                    <table>
+                        <thead><tr><th>Código</th><th>Disciplina</th><th>Professor</th></tr></thead>
+                        <tbody>${store.disciplinas.map(d => `<tr><td>${d.id}</td><td><strong>${d.nome}</strong></td><td>${d.professor}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`,
+            notas: () => `
+                <div class="card">
+                    <h3>Notas e Frequência</h3>
+                    <table>
+                        <thead><tr><th>Disciplina</th><th>Média Final</th><th>Presença</th></tr></thead>
+                        <tbody>${store.notas.map(n => `<tr><td>${n.disciplina}</td><td><strong style="color:var(--primary)">${n.nota.toFixed(1)}</strong></td><td>${n.freq}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`
+        };
+
+        function navegar(path) {
+            document.getElementById("app-content").innerHTML = views[path]();
+        }
+
+        function irParaHome() {
+            if (usuarioLogado.papel === "admin") navegar('usuarios');
+            else if (usuarioLogado.papel === "professor") navegar('disciplinas');
+            else navegar('notas');
+        }
+
+        function executarLogout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>

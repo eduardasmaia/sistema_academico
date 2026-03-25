@@ -1,0 +1,105 @@
+class Usuario:
+    def __init__(self, id_usuario, nome, tipo):
+        self.id_usuario = id_usuario
+        self.nome = nome
+        self.tipo = tipo
+
+class Aluno(Usuario):
+    def __init__(self, id_usuario, nome):
+        super().__init__(id_usuario, nome, "Aluno")
+
+    def ver_boletim(self, disciplina):
+        print(f"\n--- Boletim de {self.nome} em {disciplina.nome} ---")
+        notas = disciplina.notas.get(self.id_usuario, [])
+        faltas = disciplina.frequencia.get(self.id_usuario, 0)
+        media = sum(notas) / len(notas) if notas else 0
+        
+        print(f"Notas: {notas} | Média: {media:.1f}")
+        print(f"Faltas totais: {faltas}")
+        print("---------------------------------------")
+
+class Professor(Usuario):
+    def __init__(self, id_usuario, nome):
+        super().__init__(id_usuario, nome, "Professor")
+
+class Admin(Usuario):
+    def __init__(self, id_usuario, nome):
+        super().__init__(id_usuario, nome, "Admin")
+
+class Disciplina:
+    def __init__(self, id_disciplina, nome, professor):
+        self.id_disciplina = id_disciplina
+        self.nome = nome
+        self.professor = professor
+        self.alunos_matriculados = {} # Dicionário para buscar alunos mais rápido
+        self.notas = {}               # {id_aluno: [nota1, nota2]}
+        self.frequencia = {}          # {id_aluno: total_faltas}
+
+    def matricular_aluno(self, admin, aluno):
+        if admin.tipo != "Admin":
+            print(f"Erro: {admin.nome} não tem permissão para matricular alunos.")
+            return
+        
+        self.alunos_matriculados[aluno.id_usuario] = aluno
+        self.notas[aluno.id_usuario] = []
+        self.frequencia[aluno.id_usuario] = 0
+        print(f"Sucesso: Aluno {aluno.nome} matriculado em {self.nome}.")
+
+    def lancar_nota(self, professor, id_aluno, nota):
+        if professor.id_usuario != self.professor.id_usuario:
+            print("Erro: Apenas o professor da disciplina pode lançar notas.")
+            return
+        if id_aluno not in self.alunos_matriculados:
+            print("Erro: Aluno não está matriculado nesta disciplina.")
+            return
+        
+        self.notas[id_aluno].append(nota)
+        print(f"Nota {nota} lançada para o aluno ID {id_aluno} em {self.nome}.")
+
+    def registrar_falta(self, professor, id_aluno):
+        if professor.id_usuario != self.professor.id_usuario:
+            print("Erro: Apenas o professor da disciplina pode registrar faltas.")
+            return
+        if id_aluno not in self.alunos_matriculados:
+            print("Erro: Aluno não está matriculado nesta disciplina.")
+            return
+        
+        self.frequencia[id_aluno] += 1
+        print(f"Falta registrada para o aluno ID {id_aluno} em {self.nome}.")
+
+# ==========================================
+# Testando o Sistema (Simulação)
+# ==========================================
+if __name__ == "__main__":
+    # 1. Criando os Usuários
+    admin1 = Admin(1, "Carlos (Diretor)")
+    prof_matematica = Professor(2, "Prof. Alan Turing")
+    prof_historia = Professor(3, "Prof. Heródoto")
+    aluno1 = Aluno(4, "João Silva")
+    aluno2 = Aluno(5, "Maria Souza")
+
+    # 2. Criando Disciplinas
+    matematica = Disciplina(101, "Matemática Aplicada", prof_matematica)
+
+    # 3. Admin matricula alunos
+    print("\n--- Processo de Matrícula ---")
+    matematica.matricular_aluno(admin1, aluno1)
+    matematica.matricular_aluno(admin1, aluno2)
+    
+    # Tentativa de matrícula por quem não é admin (Teste de Segurança)
+    matematica.matricular_aluno(prof_matematica, aluno1) 
+
+    # 4. Professor lança notas e faltas
+    print("\n--- Lançamento de Notas e Faltas ---")
+    matematica.lancar_nota(prof_matematica, aluno1.id_usuario, 8.5)
+    matematica.lancar_nota(prof_matematica, aluno1.id_usuario, 9.0)
+    matematica.registrar_falta(prof_matematica, aluno1.id_usuario)
+
+    matematica.lancar_nota(prof_matematica, aluno2.id_usuario, 7.0)
+    
+    # Tentativa de lançamento de nota por outro professor (Teste de Segurança)
+    matematica.lancar_nota(prof_historia, aluno1.id_usuario, 10.0)
+
+    # 5. Aluno visualiza seu próprio boletim
+    aluno1.ver_boletim(matematica)
+    aluno2.ver_boletim(matematica)

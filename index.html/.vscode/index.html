@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Acadêmico | Faculdade J&M</title>
+    <style>
+        :root {
+            --primary: #002147;   /* Azul Marinho J&M */
+            --accent: #0056b3;    /* Azul Royal */
+            --white: #ffffff;
+            --bg: #f4f7f9;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); 
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #00152e 100%);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* Estilização da Logo */
+        .logo-img {
+            width: 120px; 
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1));
+        }
+
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; color: var(--primary); font-weight: 600; margin-bottom: 8px; font-size: 0.85rem; }
+        input, select { 
+            width: 100%; padding: 12px; border: 2px solid #e1e8ee; 
+            border-radius: 6px; outline: none; transition: 0.3s; box-sizing: border-box; 
+        }
+        input:focus, select:focus { border-color: var(--accent); }
+
+        .btn-login { 
+            width: 100%; padding: 14px; background: var(--primary); color: white; 
+            border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; 
+        }
+        .btn-login:hover { background: var(--accent); transform: translateY(-2px); }
+
+        /* --- TELA DO SISTEMA --- */
+        #sistema-screen { display: none; height: 100vh; }
+        .wrapper { display: flex; height: 100%; }
+        
+        nav { width: 260px; background: var(--primary); color: white; padding: 25px; display: flex; flex-direction: column; }
+        nav h2 { border-bottom: 2px solid var(--accent); padding-bottom: 15px; margin-bottom: 20px; font-size: 1.2rem; }
+        nav ul { list-style: none; padding: 0; flex: 1; }
+        nav li { padding: 15px; cursor: pointer; border-radius: 6px; transition: 0.3s; margin-bottom: 5px; }
+        nav li:hover { background: var(--accent); }
+
+        main { flex: 1; padding: 40px; overflow-y: auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 14px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: var(--primary); color: white; font-size: 0.85rem; }
+        
+        .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; color: white; }
+        .admin { background: #2c3e50; }
+        .professor { background: var(--warning); }
+        .aluno { background: var(--success); }
+
+        .logout-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: auto; }
+        #erro { color: var(--danger); font-size: 0.85rem; margin-top: 10px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <section id="login-screen">
+        <div class="login-card">
+            <div class="logo-area">
+                <img src="logojm.png.jpg" alt="Logo Faculdade J&M" class="logo-img">
+                <h1 style="color: var(--primary); font-size: 1.6rem; margin: 0;">FACULDADE J&M</h1>
+                <p style="margin-bottom: 25px; color: #666;">Portal Acadêmico</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="usuario-input">Usuário</label>
+                    <input type="text" id="usuario-input" placeholder="Digite seu acesso" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha-input">Senha</label>
+                    <input type="password" id="senha-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">ACESSAR SISTEMA</button>
+                <div id="erro"></div>
+            </form>
+        </div>
+    </section>
+
+    <section id="sistema-screen">
+        <div class="wrapper">
+            <nav>
+                <h2 id="user-badge">FACULDADE J&M</h2>
+                <ul id="menu-acesso"></ul>
+                <button class="logout-btn" onclick="executarLogout()">SAIR DO PORTAL</button>
+            </nav>
+            <main id="app-content"></main>
+        </div>
+    </section>
+
+    <script>
+        // O restante da sua lógica permanece a mesma
+        const store = {
+            usuarios: [
+                { id: 1, nome: "Maria Eduarda", papel: "admin", senha: "123" },
+                { id: 2, nome: "Jarlison", papel: "admin", senha: "123" },
+                { id: 3, nome: "Márcia", papel: "professor", senha: "123" },
+                { id: 4, nome: "José", papel: "aluno", senha: "123" },
+                { id: 5, nome: "Igor", papel: "aluno", senha: "123" }
+            ],
+            disciplinas: [
+                { id: 101, nome: "Cálculo I", professor: "Márcia" },
+                { id: 102, nome: "Estrutura de Dados", professor: "Márcia" }
+            ],
+            registros: [
+                { id: 1, aluno: "José", disciplina: "Cálculo I", nota: 8.5, frequencia: "90%" },
+                { id: 2, aluno: "Igor", disciplina: "Estrutura de Dados", nota: 7.0, frequencia: "85%" }
+            ]
+        };
+
+        let usuarioLogado = null;
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userIn = document.getElementById("usuario-input").value;
+            const passIn = document.getElementById("senha-input").value;
+
+            const user = store.usuarios.find(u => 
+                u.nome.toLowerCase() === userIn.toLowerCase() && u.senha === passIn
+            );
+
+            if (user) {
+                usuarioLogado = user;
+                document.getElementById("login-screen").style.display = "none";
+                document.getElementById("sistema-screen").style.display = "block";
+                document.getElementById("user-badge").innerText = user.nome;
+                desenharMenu();
+                irParaHome();
+            } else {
+                document.getElementById("erro").innerText = "Acesso negado!";
+            }
+        });
+
+        function desenharMenu() {
+            const menu = document.getElementById("menu-acesso");
+            menu.innerHTML = "";
+            if (usuarioLogado.papel === "admin") {
+                menu.innerHTML += `<li onclick="navegar('usuarios')">👤 Usuários</li>`;
+                menu.innerHTML += `<li onclick="navegar('disciplinas')">📚 Disciplinas</li>`;
+            } else if (usuarioLogado.papel === "professor") {
+                menu.innerHTML += `<li onclick="navegar('disciplinas')">📚 Minhas Turmas</li>`;
+                menu.innerHTML += `<li onclick="navegar('lancar_notas')">✍️ Lançar Notas</li>`;
+            } else {
+                menu.innerHTML += `<li onclick="navegar('notas')">📝 Minhas Notas</li>`;
+            }
+        }
+
+        const views = {
+            usuarios: () => `
+                <div class="card">
+                    <h3>Gerenciamento de Usuários</h3>
+                    <table>
+                        <thead><tr><th>ID</th><th>Nome</th><th>Papel</th></tr></thead>
+                        <tbody>${store.usuarios.map(u => `<tr><td>${u.id}</td><td>${u.nome}</td><td><span class="badge ${u.papel}">${u.papel.toUpperCase()}</span></td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`,
+            disciplinas: () => `
+                <div class="card">
+                    <h3>Quadro de Disciplinas</h3>
+                    <table>
+                        <thead><tr><th>Código</th><th>Nome</th><th>Professor</th></tr></thead>
+                        <tbody>${store.disciplinas.map(d => `<tr><td>${d.id}</td><td>${d.nome}</td><td>${d.professor}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`,
+            notas: () => {
+                const minhasNotas = store.registros.filter(r => r.aluno === usuarioLogado.nome);
+                return `
+                <div class="card">
+                    <h3>Meu Boletim Escolar</h3>
+                    <table>
+                        <thead><tr><th>Disciplina</th><th>Nota</th><th>Frequência</th></tr></thead>
+                        <tbody>${minhasNotas.map(n => `<tr><td>${n.disciplina}</td><td><strong>${Number(n.nota).toFixed(1)}</strong></td><td>${n.frequencia}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`;
+            },
+            lancar_notas: () => `
+                <div class="card">
+                    <h3>Lançamento Acadêmico</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                        <select id="sel-aluno">${store.usuarios.filter(u => u.papel === 'aluno').map(a => `<option>${a.nome}</option>`).join('')}</select>
+                        <select id="sel-disc">${store.disciplinas.filter(d => d.professor === usuarioLogado.nome).map(d => `<option>${d.nome}</option>`).join('')}</select>
+                        <input type="number" id="val-nota" placeholder="Nota (0-10)" step="0.1" min="0" max="10">
+                        <input type="number" id="val-freq" placeholder="Freq (%)" min="0" max="100">
+                    </div>
+                    <button onclick="salvarNota()" class="btn-login" style="background:var(--success)">SALVAR REGISTRO</button>
+                    <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+                    <table>
+                        <thead><tr><th>Aluno</th><th>Disciplina</th><th>Nota</th><th>Freq</th></tr></thead>
+                        <tbody>${store.registros.map(r => `<tr><td>${r.aluno}</td><td>${r.disciplina}</td><td>${r.nota}</td><td>${r.frequencia}</td></tr>`).join('')}</tbody>
+                    </table>
+                </div>`
+        };
+
+        function salvarNota() {
+            const nota = document.getElementById('val-nota').value;
+            const freq = document.getElementById('val-freq').value;
+            if(!nota || !freq) return alert("Preencha todos os campos!");
+
+            store.registros.push({
+                id: store.registros.length + 1,
+                aluno: document.getElementById('sel-aluno').value,
+                disciplina: document.getElementById('sel-disc').value,
+                nota: parseFloat(nota),
+                frequencia: freq + "%"
+            });
+
+            alert("Lançamento concluído!");
+            navegar('lancar_notas');
+        }
+
+        function navegar(path) {
+            document.getElementById("app-content").innerHTML = views[path]();
+        }
+
+        function irParaHome() {
+            if (usuarioLogado.papel === "admin") navegar('usuarios');
+            else if (usuarioLogado.papel === "professor") navegar('disciplinas');
+            else navegar('notas');
+        }
+
+        function executarLogout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
